@@ -96,7 +96,6 @@ const handler = NextAuth({
         token.email = user.email;
         token.name = user.name;
         token.username = user.username;
-        token.image = user.image; // Add user image to the token
       } else if (token.email) {
         // Fetch additional user details for OAuth users
         await connectDB();
@@ -104,7 +103,6 @@ const handler = NextAuth({
         if (dbUser) {
           token.username = dbUser.username;
           token.name = dbUser.name;
-          token.image = dbUser.image; // Fetch the image from the database
         }
       }
       return token;
@@ -116,7 +114,7 @@ const handler = NextAuth({
           email: token.email,
           name: token.name,
           username: token.username,
-          image: token.image, // Add the user image to the session
+          image: token.picture,
         };
       }
       return session;

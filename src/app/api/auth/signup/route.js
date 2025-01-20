@@ -1,14 +1,12 @@
-import connectDB from "@utils/connectDB";
 import User from "@/models/User";
+import { connectDB } from "@/utils/connectDB";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
     await connectDB(); // Connect to the database
 
-    const { email, password, username } = await req.json();
-
-    console.log({ email, password, username });
+    const { email, password, username, name } = await req.json();
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -23,6 +21,7 @@ export async function POST(req) {
 
     // Create a new user
     const newUser = await User.create({
+      name,
       email,
       password: hashedPassword,
       username,

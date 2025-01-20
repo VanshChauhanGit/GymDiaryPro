@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,7 @@ function SignUp() {
 
   const { data: session } = useSession();
   const router = useRouter();
+  const showToast = useToast();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -89,15 +91,33 @@ function SignUp() {
 
   const handleGoogleSignIn = async () => {
     await signIn("google", { callbackUrl: "/" });
-    showToast("success", "You are logged in successfullY!");
+    // showToast("success", "You are logged in successfullY!");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
     if (validateForm()) {
-      console.log("Form Submitted:", formData);
-      // Perform API call or other actions here
-      alert("Account successfully created!");
+      console.log(formData);
+      e.preventDefault();
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        console.log(res);
+
+        const data = await res.json();
+        console.log(data);
+        if (res.ok) {
+          router.push("/login");
+          showToast("success", "Account created successfully, Please login!");
+        } else {
+          showToast("error", data.error);
+        }
+      } catch (error) {
+        showToast("error", "An error occurred. Please try again.");
+      }
     }
   };
 
@@ -207,7 +227,9 @@ function SignUp() {
               className="relative border-2 border-black text-black px-6 py-2 rounded-lg overflow-hidden group"
             >
               <span className="absolute inset-0 bg-black transform -translate-x-full group-hover:translate-x-0 transition duration-300"></span>
-              <span className="relative z-10 group-hover:text-white">Sign Up</span>
+              <span className="relative z-10 group-hover:text-white">
+                Sign Up
+              </span>
             </button>
           </form>
           <div className="mt-6 items-center text-gray-800">

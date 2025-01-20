@@ -25,12 +25,14 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { data: session } = useSession();
-
   const showToast = useToast();
+
+  const avatarImg = session?.user?.image || null;
+  const avatarFallback = session?.user?.name?.charAt(0).toUpperCase() || "";
 
   const handleSignOut = async () => {
     await signOut({ redirect: false, callbackUrl: "/" });
-    showToast("success", "Sign Out Successfully !");
+    showToast("success", "Sign Out Successfully!");
   };
 
   return (
@@ -41,14 +43,13 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           {/* App Logo */}
-
           <Link href="/" className="flex items-center gap-2">
             <img src="/dumbell.png" alt="app logo" className="size-8" />
             <span className="text-black text-xl font-bold">GymDiary</span>
           </Link>
 
           {/* Center Navigation Menu */}
-          {session ? (
+          {session && (
             <div className="hidden sm:block">
               <div className="flex space-x-4 items-center">
                 {navigation.map((item) => (
@@ -68,33 +69,35 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
-          ) : (
-            ""
           )}
 
           {/* Right Section: Menu Button and Profile */}
           <div className="flex items-center space-x-4">
             {/* Mobile Menu Button */}
-            {session ? (
+            {session && (
               <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:hidden">
                 <span className="sr-only">Open main menu</span>
                 <IoMenu className="block h-6 w-6" aria-hidden="true" />
                 <RxCross2 className="hidden h-6 w-6" aria-hidden="true" />
               </DisclosureButton>
-            ) : (
-              ""
             )}
 
             {session ? (
               <Menu as="div" className="relative">
                 <div>
-                  <MenuButton className="relative rounded-full bg-background text-sm focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white">
+                  <MenuButton className="relative rounded-full bg-background text-sm  mt-2 ">
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="size-10 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt="user image"
-                    />
+                    {avatarImg ? (
+                      <img
+                        className="size-10 rounded-full"
+                        src={avatarImg}
+                        alt="User img"
+                      />
+                    ) : (
+                      <div className="size-10 flex items-center justify-center bg-sky-500 text-white text-2xl font-bold rounded-full">
+                        {avatarFallback}
+                      </div>
+                    )}
                   </MenuButton>
                 </div>
                 <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-10 focus:outline-none">

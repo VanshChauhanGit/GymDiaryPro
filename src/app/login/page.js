@@ -58,19 +58,32 @@ function Login() {
   };
 
   const handleGoogleSignIn = async () => {
-    const res = await signIn("google");
+    await signIn("google");
     router.push("/");
-    if (res?.error) {
-      showToast("error", "Login failed!");
-    } else {
-      showToast("success", "Your are logged in successfully!");
-    }
+    // showToast("success", "Login successfull");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
     if (validateForm()) {
-      showToast("success", "Login successfull");
+      e.preventDefault();
+      try {
+        const res = await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (res?.ok) {
+          showToast("success", "Login successfull!");
+          router.push("/dashboard");
+        } else if (res?.status === 401) {
+          showToast("error", "Incorrect email or password.");
+        } else {
+          showToast("error", "An error occurred. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error logging in:", error.message);
+      }
     }
   };
 
