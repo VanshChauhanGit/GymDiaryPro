@@ -99,10 +99,9 @@ function SignUp() {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     if (validateForm()) {
       showLoader();
-      console.log(formData);
-      e.preventDefault();
       try {
         const res = await fetch("/api/auth/signup", {
           method: "POST",
@@ -110,10 +109,7 @@ function SignUp() {
           body: JSON.stringify(formData),
         });
 
-        console.log(res);
-
         const data = await res.json();
-        console.log(data);
         if (res.ok) {
           hideLoader();
           router.push("/login");

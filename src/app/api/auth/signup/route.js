@@ -4,16 +4,23 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
-    await connectDB(); // Connect to the database
+    await connectDB();
 
     const { email, password, username, name } = await req.json();
 
     // Check if the user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
     if (existingUser) {
-      return new Response(JSON.stringify({ error: "User already exists" }), {
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({
+          error: "User already exists with the same email or username",
+        }),
+        {
+          status: 400,
+        }
+      );
     }
 
     // Hash the password

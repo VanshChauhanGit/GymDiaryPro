@@ -12,6 +12,23 @@ export const fetchUser = async (email) => {
 
 export const updateProfile = async (email, data) => {
   await connectDB();
-  const ndata = Object.fromEntries(data);
-  await User.updateOne({ email }, ndata);
+
+  const existingUserWithUsername = await User.findOne({
+    username: data.username,
+  }).lean();
+
+  if (existingUserWithUsername) {
+    return {
+      error: "User already exists with the same email or username",
+      status: 400,
+    };
+  }
+
+  const user = await User.updateOne({ email }, data).lean();
+
+  return {
+    message: "Profile updated successfully",
+    user: user,
+    status: 200,
+  };
 };

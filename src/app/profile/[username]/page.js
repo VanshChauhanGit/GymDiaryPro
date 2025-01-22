@@ -4,26 +4,29 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { fetchUser, updateProfile } from "@/actions/userActions";
 import { useLoader } from "@/utils/useLoader";
+import { useToast } from "@/components/Toast";
 
 function Profile() {
   const [form, setForm] = useState({});
-
+  const [initialForm, setInitialForm] = useState({}); // Track the initial state
   const { data: session, status } = useSession();
   const router = useRouter();
+  const showToast = useToast();
   const { showLoader, hideLoader } = useLoader();
 
   useEffect(() => {
-    if (!session) {
-      router.push("/login");
-    } else {
+    if (session) {
       getData();
+    } else {
+      router.push("/login");
     }
   }, [session, router]);
 
   const getData = async () => {
     showLoader();
-    let u = await fetchUser(session.user.email);
-    setForm(u);
+    const userData = await fetchUser(session.user.email);
+    setForm(userData);
+    setInitialForm(userData); // Set the initial state for comparison
     hideLoader();
   };
 
@@ -31,10 +34,49 @@ function Profile() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async () => {
+    showLoader();
+
+    // Compare current form with initial state to find changed fields
+    const updatedFields = Object.keys(form).reduce((changes, key) => {
+      if (form[key] !== initialForm[key]) {
+        changes[key] = form[key];
+      }
+      return changes;
+    }, {});
+
+    if (Object.keys(updatedFields).length === 0) {
+      hideLoader();
+      showToast("info", "No changes to save!");
+      return;
+    }
+
+    const result = await updateProfile(session.user.email, updatedFields);
+
+    if (result.status === 200) {
+      hideLoader();
+      showToast("success", "Profile updated successfully!");
+      setInitialForm({ ...form }); // Update the initial state
+    } else if (result.status === 400) {
+      hideLoader();
+      showToast("error", "Username is already taken!");
+    } else {
+      hideLoader();
+      showToast("error", "Something went wrong!");
+    }
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-center my-2">Profile Page</h1>
-      <form className="max-w-2xl mx-auto border rounded-lg p-4">
+      <form
+        type="button"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        className="max-w-2xl mx-auto border rounded-lg p-4"
+      >
         <div className="my-2">
           <label
             htmlFor="email"
@@ -46,7 +88,7 @@ function Profile() {
             type="text"
             name="email"
             id="email"
-            value={form.email ? form.email : ""}
+            value={form.email || ""}
             onChange={handleChange}
             disabled
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -63,7 +105,7 @@ function Profile() {
             type="text"
             name="username"
             id="username"
-            value={form.username ? form.username : ""}
+            value={form.username || ""}
             onChange={handleChange}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
@@ -79,7 +121,7 @@ function Profile() {
             type="text"
             name="name"
             id="name"
-            value={form.name ? form.name : ""}
+            value={form.name || ""}
             onChange={handleChange}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
@@ -95,7 +137,7 @@ function Profile() {
             type="text"
             name="image"
             id="image"
-            value={form.image ? form.image : ""}
+            value={form.image || ""}
             onChange={handleChange}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
