@@ -6,6 +6,7 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useToast } from "@/components/Toast";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useLoader } from "@/utils/useLoader";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,7 @@ function Login() {
   const showToast = useToast();
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { showLoader, hideLoader } = useLoader();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -58,13 +60,16 @@ function Login() {
   };
 
   const handleGoogleSignIn = async () => {
+    showLoader();
     await signIn("google");
     router.push("/");
+    hideLoader();
     // showToast("success", "Login successfull");
   };
 
   const handleSubmit = async (e) => {
     if (validateForm()) {
+      showLoader();
       e.preventDefault();
       try {
         const res = await signIn("credentials", {
@@ -74,23 +79,31 @@ function Login() {
         });
 
         if (res?.ok) {
+          hideLoader();
           showToast("success", "Login successfull!");
           router.push("/dashboard");
         } else if (res?.status === 401) {
+          hideLoader();
           showToast("error", "Incorrect email or password.");
         } else {
+          hideLoader();
           showToast("error", "An error occurred. Please try again.");
         }
       } catch (error) {
+        hideLoader();
         console.error("Error logging in:", error.message);
       }
     }
+    hideLoader();
   };
 
   useEffect(() => {
+    showLoader();
     if (session) {
+      hideLoader();
       router.push("/");
     }
+    hideLoader();
   }, [session, router, handleGoogleSignIn, handleSubmit]);
 
   return (

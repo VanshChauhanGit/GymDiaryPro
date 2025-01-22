@@ -6,6 +6,7 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/Toast";
+import { useLoader } from "@/utils/useLoader";
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +31,7 @@ function SignUp() {
   const { data: session } = useSession();
   const router = useRouter();
   const showToast = useToast();
+  const { showLoader, hideLoader } = useLoader();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -90,12 +92,15 @@ function SignUp() {
   };
 
   const handleGoogleSignIn = async () => {
+    showLoader();
     await signIn("google", { callbackUrl: "/" });
+    hideLoader();
     // showToast("success", "You are logged in successfullY!");
   };
 
   const handleSubmit = async (e) => {
     if (validateForm()) {
+      showLoader();
       console.log(formData);
       e.preventDefault();
       try {
@@ -110,15 +115,19 @@ function SignUp() {
         const data = await res.json();
         console.log(data);
         if (res.ok) {
+          hideLoader();
           router.push("/login");
           showToast("success", "Account created successfully, Please login!");
         } else {
+          hideLoader();
           showToast("error", data.error);
         }
       } catch (error) {
+        hideLoader();
         showToast("error", "An error occurred. Please try again.");
       }
     }
+    hideLoader();
   };
 
   useEffect(() => {

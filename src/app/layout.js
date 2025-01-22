@@ -4,6 +4,8 @@ import SessionWrapper from "@/components/SessionWrapper";
 import Toast from "@/components/Toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Loader from "@/components/Loader";
+import { LoaderProvider } from "@/utils/useLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +31,14 @@ export default function RootLayout({ children }) {
         >
           <Toast />
           <Navbar />
-          <div className="w-full bg-background">
-            <div className="min-h-[88vh] bg-background mx-auto py-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
+          <LoaderProvider>
+            <Loader />
+            <div className="w-full bg-background">
+              <div className="min-h-[88vh] bg-background mx-auto py-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
             </div>
-          </div>
+          </LoaderProvider>
           <Footer />
         </body>
       </SessionWrapper>
