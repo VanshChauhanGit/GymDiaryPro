@@ -37,7 +37,6 @@ function Profile() {
   const handleSubmit = async () => {
     showLoader();
 
-    // Compare current form with initial state to find changed fields
     const updatedFields = Object.keys(form).reduce((changes, key) => {
       if (form[key] !== initialForm[key]) {
         changes[key] = form[key];
@@ -56,7 +55,8 @@ function Profile() {
     if (result.status === 200) {
       hideLoader();
       showToast("success", "Profile updated successfully!");
-      setInitialForm({ ...form }); // Update the initial state
+      setInitialForm({ ...form });
+      window.location.reload();
     } else if (result.status === 400) {
       hideLoader();
       showToast("error", "Username is already taken!");
@@ -107,6 +107,7 @@ function Profile() {
             id="username"
             value={form.username || ""}
             onChange={handleChange}
+            placeholder="johndoe234"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
@@ -123,6 +124,7 @@ function Profile() {
             id="name"
             value={form.name || ""}
             onChange={handleChange}
+            placeholder="John Doe"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
@@ -131,7 +133,7 @@ function Profile() {
             htmlFor="image"
             className="block mb-2 text-lg font-medium text-gray-900 dark:text-white"
           >
-            Profile Picture
+            Profile Picture Url
           </label>
           <input
             type="text"
@@ -139,6 +141,7 @@ function Profile() {
             id="image"
             value={form.image || ""}
             onChange={handleChange}
+            placeholder="https://example.com/profile.jpg"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>

@@ -13,6 +13,8 @@ import { IoMenu } from "react-icons/io5";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useToast } from "./Toast";
+import { fetchUser } from "@/actions/userActions";
+import { useState, useEffect } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/", current: true },
@@ -26,14 +28,26 @@ function classNames(...classes) {
 export default function Navbar() {
   const { data: session } = useSession();
   const showToast = useToast();
+  const [avatarImg, setAvatarImage] = useState(null);
 
-  const avatarImg = session?.user?.image || null;
+  // const avatarImg = session?.user?.image || null;
   const avatarFallback = session?.user?.name?.charAt(0).toUpperCase() || "";
 
   const handleSignOut = async () => {
     await signOut({ redirect: false, callbackUrl: "/" });
     showToast("success", "Sign Out Successfully!");
   };
+
+  const getUser = async () => {
+    const user = await fetchUser(session?.user?.email);
+    setAvatarImage(user?.image);
+  };
+
+  useEffect(() => {
+    if (session) {
+      getUser();
+    }
+  }, [session]);
 
   return (
     <Disclosure
@@ -109,14 +123,14 @@ export default function Navbar() {
                       Your Profile
                     </Link>
                   </MenuItem>
-                  <MenuItem>
+                  {/* <MenuItem>
                     <Link
                       href="/user/settings"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Settings
                     </Link>
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem>
                     <button
                       onClick={handleSignOut}
