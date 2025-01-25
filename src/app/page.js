@@ -7,7 +7,7 @@ export default function Component() {
 
   return (
     <>
-      <h1 className="bg-red-400 text-white">Page</h1>
+      <h1 className="text-3xl">Page</h1>
       
     </>
   );

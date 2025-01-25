@@ -15,10 +15,11 @@ import { useSession, signOut } from "next-auth/react";
 import { useToast } from "./Toast";
 import { fetchUser } from "@/actions/userActions";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const navigation = [
-  { name: "Dashboard", href: "/", current: true },
-  { name: "WorkoutPlan", href: "/workoutplan", current: false },
+  { name: "Dashboard", href: "/", href2: "/" },
+  { name: "WorkoutPlan", href: "/workoutplan", href2: "/workoutplan/edit" },
 ];
 
 function classNames(...classes) {
@@ -26,11 +27,12 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-  const { data: session } = useSession();
-  const showToast = useToast();
   const [avatarImg, setAvatarImage] = useState(null);
 
-  // const avatarImg = session?.user?.image || null;
+  const { data: session } = useSession();
+  const showToast = useToast();
+  const pathname = usePathname();
+
   const avatarFallback = session?.user?.name?.charAt(0).toUpperCase() || "";
 
   const handleSignOut = async () => {
@@ -70,15 +72,23 @@ export default function Navbar() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-gray-900 text-white"
-                        : "text-black hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-md font-medium"
-                    )}
-                    aria-current={item.current ? "page" : undefined}
+                    passHref
+                    prefetch={true}
                   >
-                    {item.name}
+                    <span
+                      className={`${
+                        pathname === item.href || pathname === item.href2
+                          ? "bg-gray-900 text-white"
+                          : "text-black hover:bg-gray-700 hover:text-white"
+                      } rounded-md px-3 py-2 text-md font-medium`}
+                      aria-current={
+                        pathname === item.href || item.href2
+                          ? "page"
+                          : undefined
+                      }
+                    >
+                      {item.name}
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -87,15 +97,6 @@ export default function Navbar() {
 
           {/* Right Section: Menu Button and Profile */}
           <div className="flex items-center space-x-4">
-            {/* Mobile Menu Button */}
-            {session && (
-              <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:hidden">
-                <span className="sr-only">Open main menu</span>
-                <IoMenu className="block h-6 w-6" aria-hidden="true" />
-                <RxCross2 className="hidden h-6 w-6" aria-hidden="true" />
-              </DisclosureButton>
-            )}
-
             {session ? (
               <Menu as="div" className="relative">
                 <div>
@@ -123,14 +124,6 @@ export default function Navbar() {
                       Your Profile
                     </Link>
                   </MenuItem>
-                  {/* <MenuItem>
-                    <Link
-                      href="/user/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Settings
-                    </Link>
-                  </MenuItem> */}
                   <MenuItem>
                     <button
                       onClick={handleSignOut}
@@ -160,6 +153,15 @@ export default function Navbar() {
                   </button>
                 </Link>
               </div>
+            )}
+
+            {/* Mobile Menu Button */}
+            {session && (
+              <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:hidden">
+                <span className="sr-only">Open main menu</span>
+                <IoMenu className="block h-6 w-6" aria-hidden="true" />
+                <RxCross2 className="hidden h-6 w-6" aria-hidden="true" />
+              </DisclosureButton>
             )}
           </div>
         </div>
