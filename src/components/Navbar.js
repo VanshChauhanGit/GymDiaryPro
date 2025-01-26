@@ -170,22 +170,24 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Bottom Navigation (Visible on small screens) */}
-        <div className="fixed bottom-0 inset-x-0 bg-background flex justify-around items-center sm:hidden py-4 border-t border-gray-700">
-          {navigation.map((item) => (
-            <Link key={item.name} href={item.href} passHref>
-              <div
-                className={`${
-                  pathname === item.href || pathname === item.href2
-                    ? "text-black"
-                    : "text-gray-500"
-                } flex flex-col items-center w-full`}
-              >
-                {item.icon}
-                <span className="text-xl">{item.name}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {session && (
+          <div className="fixed bottom-0 inset-x-0 bg-background flex justify-around items-center sm:hidden py-4 border-t border-gray-700">
+            {navigation.map((item) => (
+              <Link key={item.name} href={item.href} passHref>
+                <div
+                  className={`${
+                    pathname === item.href || pathname === item.href2
+                      ? "text-black"
+                      : "text-gray-500"
+                  } flex flex-col items-center w-full`}
+                >
+                  {item.icon}
+                  <span className="text-xl">{item.name}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </Disclosure>
     </>
   );
