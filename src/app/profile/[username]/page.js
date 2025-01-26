@@ -26,7 +26,7 @@ function Profile() {
     showLoader();
     const userData = await fetchUser(session.user.email);
     setForm(userData);
-    setInitialForm(userData); // Set the initial state for comparison
+    setInitialForm(userData);
     hideLoader();
   };
 
@@ -57,6 +57,7 @@ function Profile() {
       showToast("success", "Profile updated successfully!");
       setInitialForm({ ...form });
       window.location.reload();
+      router.push(form.username);
     } else if (result.status === 400) {
       hideLoader();
       showToast("error", "Username is already taken!");

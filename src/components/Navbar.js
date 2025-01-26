@@ -1,15 +1,11 @@
 "use client";
 import {
   Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { RxCross2 } from "react-icons/rx";
-import { IoMenu } from "react-icons/io5";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useToast } from "./Toast";

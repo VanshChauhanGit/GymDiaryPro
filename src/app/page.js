@@ -5,7 +5,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useLoader } from "@/utils/useLoader";
 import { fetchWorkoutPlan } from "@/actions/userActions";
-import Loader2 from "@/components/Loader2";
+import Home from "@/components/Home";
+import { FaDumbbell, FaCalendarAlt, FaClipboardList } from "react-icons/fa";
+import Link from "next/link";
 
 const Dashboard = () => {
   const [workoutPlan, setWorkoutPlan] = useState(null);
@@ -16,19 +18,6 @@ const Dashboard = () => {
   const { data: session } = useSession();
   const showToast = useToast();
   const { showLoader, hideLoader } = useLoader();
-
-  // Fetch exercises from ExerciseDB API
-  // useEffect(() => {
-  //   fetch("https://exercisedb.p.rapidapi.com/exercises", {
-  //     headers: {
-  //       "X-RapidAPI-Key": "f161361abemsh820c9294dcdb5a6p13905fjsn5961672678b1",
-  //       "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => setExercises(data))
-  //     .catch((err) => console.error(err));
-  // }, []);
 
   const getWorkoutPlan = async () => {
     showLoader();
@@ -64,15 +53,72 @@ const Dashboard = () => {
   }, [session, router]);
 
   if (!session) {
-    return (
-      <div className="min-h-screen bg-background contain text-4xl text-text font-body">
-        User is not logged in !
-      </div>
-    );
+    return <Home />;
   }
 
   return (
     <div className="min-h-screen bg-background contain text-text font-body">
+      {/* <div className="min-h-screen bg-[#f2ffee] p-6">
+        <header className="text-center text-3xl font-bold text-[#071e00] mb-8">
+          Welcome to Your GymDiary
+        </header>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4 mb-4">
+              <FaDumbbell className="text-4xl text-[#3efe18]" />
+              <h3 className="text-2xl font-semibold text-[#071e00]">
+                Exercise Records
+              </h3>
+            </div>
+            <p className="text-lg text-[#071e00] mb-4">
+              Keep track of your exercise routines, sets, reps, and weights.
+            </p>
+            <Link
+              href="/exercise-records"
+              className="text-[#71feca] hover:text-[#3afeef] text-lg font-semibold"
+            >
+              View Exercise Records
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4 mb-4">
+              <FaCalendarAlt className="text-4xl text-[#3efe18]" />
+              <h3 className="text-2xl font-semibold text-[#071e00]">
+                Weekly Workout Plan
+              </h3>
+            </div>
+            <p className="text-lg text-[#071e00] mb-4">
+              Plan and manage your weekly workout schedule.
+            </p>
+            <Link
+              href="/workout-plan"
+              className="text-[#71feca] hover:text-[#3afeef] text-lg font-semibold"
+            >
+              View Workout Plan
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4 mb-4">
+              <FaClipboardList className="text-4xl text-[#3efe18]" />
+              <h3 className="text-2xl font-semibold text-[#071e00]">
+                Exercise Logs
+              </h3>
+            </div>
+            <p className="text-lg text-[#071e00] mb-4">
+              Log your exercises, weights, reps, and sets after each workout.
+            </p>
+            <Link
+              href="/exercise-logs"
+              className="text-[#71feca] hover:text-[#3afeef] text-lg font-semibold"
+            >
+              View Exercise Logs
+            </Link>
+          </div>
+        </div>
+      </div> */}
       <section className="py-2">
         {workoutPlan ? (
           <div>
@@ -83,12 +129,10 @@ const Dashboard = () => {
               <div className="space-y-2">
                 {workoutPlan[todayDay]?.selectedMuscles.map((muscle) => (
                   <div key={muscle.value} className="mt-6">
-                    {/* Muscle Name */}
                     <h5 className="text-xl font-bold text-primary">
                       {muscle.value}
                     </h5>
 
-                    {/* Exercises Table */}
                     <div className="mt-2 overflow-x-auto">
                       <table className="w-full border-collapse table-auto">
                         <thead>

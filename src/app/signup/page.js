@@ -134,10 +134,12 @@ function SignUp() {
 
   return (
     <section className="bg-background w-full flex box-border pt-2 justify-center items-center">
-      <div className="bg-gray-100 rounded-2xl flex max-w-3xl p-5 items-center">
-        <div className="md:w-2/3 px-8">
-          <h2 className="font-bold text-3xl text-black">Sign Up</h2>
-          <p className="text-sm mt-4 text-black">
+      <div className="bg-gray-100 rounded-2xl flex w-full md:max-w-3xl p-2 items-center">
+        <div className="md:w-2/3 w-full px-4 md:px-8">
+          <h2 className="font-bold text-3xl text-center text-black pt-2">
+            Sign Up
+          </h2>
+          <p className="text-sm mt-4 text-black text-center">
             Create your account to get started.
           </p>
 

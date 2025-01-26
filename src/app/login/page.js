@@ -108,10 +108,10 @@ function Login() {
 
   return (
     <section className="bg-background w-full flex box-border pt-2 justify-center items-center">
-      <div className="bg-gray-100 rounded-2xl flex max-w-3xl p-5 items-center">
-        <div className="md:w-2/3 px-8">
-          <h2 className="font-bold text-3xl text-black">Login</h2>
-          <p className="text-sm mt-4 text-black">
+      <div className="bg-gray-100 rounded-2xl flex w-full md:max-w-3xl p-2 items-center">
+        <div className="md:w-2/3 w-full px-4 md:px-8">
+          <h2 className="font-bold text-3xl text-black text-center pt-2">Login</h2>
+          <p className="text-sm mt-4 text-black text-center">
             If you already have an account, easily log in now.
           </p>
 
@@ -182,7 +182,7 @@ function Login() {
               If you don't have an account..
             </p>
             <Link href="/signup">
-              <button className="text-white bg-black rounded-xl py-2 px-5 hover:bg-gray-800 font-semibold duration-300">
+              <button className="text-white bg-black rounded-xl text-sm py-2 px-5 hover:bg-gray-800 font-semibold duration-300">
                 Sign Up
               </button>
             </Link>
