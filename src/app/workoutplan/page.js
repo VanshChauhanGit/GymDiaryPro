@@ -8,6 +8,7 @@ import { IoIosArrowDropup } from "react-icons/io";
 import { useLoader } from "@/utils/useLoader";
 import { useToast } from "@/components/Toast";
 import { useSession } from "next-auth/react";
+import Loader2 from "@/components/Loader2";
 
 function WorkoutPlan() {
   const [activeDay, setActiveDay] = useState("");
@@ -23,7 +24,6 @@ function WorkoutPlan() {
   };
 
   const getWorkoutPlan = async () => {
-    console.log("test2");
     showLoader();
     try {
       const res = await fetchWorkoutPlan(session.user.email);
@@ -43,7 +43,6 @@ function WorkoutPlan() {
   };
 
   useEffect(() => {
-    console.log("test1");
     showLoader();
     if (session) {
       getWorkoutPlan();

@@ -3,7 +3,7 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer className="bg-background w-full border-t border-gray-800 dark:border-gray-700">
+    <footer className="bg-background w-full border-t border-gray-800 dark:border-gray-700 sm:pb-0 pb-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="sm:flex sm:items-center sm:justify-between">
           <Link
@@ -11,7 +11,7 @@ function Footer() {
             className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse"
           >
             <img src="/dumbell.png" className="h-8" alt="Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white">
+            <span className="text-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white">
               GymDiary
             </span>
           </Link>
@@ -39,7 +39,7 @@ function Footer() {
           </ul>
         </div>
         <hr className="my-6 border-gray-800 sm:mx-auto dark:border-gray-700 lg:my-8" />
-        <div className="block text-sm text-black sm:text-center dark:text-gray-400">
+        <div className="block text-sm text-black text-center dark:text-gray-400">
           © 2025 GymDiary™ All Rights Reserved.
         </div>
       </div>

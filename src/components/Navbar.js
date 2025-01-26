@@ -16,10 +16,17 @@ import { useToast } from "./Toast";
 import { fetchUser } from "@/actions/userActions";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { FaHome, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { AiFillSchedule } from "react-icons/ai";
 
 const navigation = [
-  { name: "Dashboard", href: "/", href2: "/" },
-  { name: "WorkoutPlan", href: "/workoutplan", href2: "/workoutplan/edit" },
+  { name: "Dashboard", icon: <FaHome size={24} />, href: "/", href2: "/" },
+  {
+    name: "WorkoutPlan",
+    icon: <AiFillSchedule size={24} />,
+    href: "/workoutplan",
+    href2: "/workoutplan/edit",
+  },
 ];
 
 function classNames(...classes) {
@@ -27,13 +34,13 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-  const [avatarImg, setAvatarImage] = useState(null);
+  const [avatarImg, setAvatarImg] = useState(null);
 
-  const { data: session } = useSession();
   const showToast = useToast();
   const pathname = usePathname();
+  const { data: session } = useSession();
 
-  const avatarFallback = session?.user?.name?.charAt(0).toUpperCase() || "";
+  const avatarFallback = session?.user?.name?.charAt(0).toUpperCase();
 
   const handleSignOut = async () => {
     await signOut({ redirect: false, callbackUrl: "/" });
@@ -42,7 +49,7 @@ export default function Navbar() {
 
   const getUser = async () => {
     const user = await fetchUser(session?.user?.email);
-    setAvatarImage(user?.image);
+    setAvatarImg(user.image);
   };
 
   useEffect(() => {
@@ -52,142 +59,134 @@ export default function Navbar() {
   }, [session]);
 
   return (
-    <Disclosure
-      as="nav"
-      className="bg-background fixed w-full z-10 border-b border-gray-700 dark:border-gray-800"
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
-          {/* App Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/dumbell.png" alt="app logo" className="size-8" />
-            <span className="text-black text-xl font-bold">GymDiary</span>
-          </Link>
+    <>
+      <Disclosure
+        as="nav"
+        className="bg-background fixed w-full z-10 border-b border-gray-700 dark:border-gray-800"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="relative flex h-16 items-center justify-between">
+            {/* App Logo */}
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/dumbell.png" alt="app logo" className="size-8" />
+              <span className="text-black text-xl font-bold">GymDiary</span>
+            </Link>
 
-          {/* Center Navigation Menu */}
-          {session && (
-            <div className="hidden sm:block">
-              <div className="flex space-x-4 items-center">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    passHref
-                    prefetch={true}
-                  >
-                    <span
-                      className={`${
-                        pathname === item.href || pathname === item.href2
-                          ? "bg-gray-900 text-white"
-                          : "text-black hover:bg-gray-700 hover:text-white"
-                      } rounded-md px-3 py-2 text-md font-medium`}
-                      aria-current={
-                        pathname === item.href || item.href2
-                          ? "page"
-                          : undefined
-                      }
-                    >
-                      {item.name}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Right Section: Menu Button and Profile */}
-          <div className="flex items-center space-x-4">
-            {session ? (
-              <Menu as="div" className="relative">
-                <div>
-                  <MenuButton className="relative rounded-full bg-background text-sm  mt-2 ">
-                    <span className="sr-only">Open user menu</span>
-                    {avatarImg ? (
-                      <img
-                        className="size-10 rounded-full"
-                        src={avatarImg}
-                        alt="User img"
-                      />
-                    ) : (
-                      <div className="size-10 flex items-center justify-center bg-sky-500 text-white text-2xl font-bold rounded-full">
-                        {avatarFallback}
-                      </div>
-                    )}
-                  </MenuButton>
-                </div>
-                <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-10 focus:outline-none">
-                  <MenuItem>
-                    <Link
-                      href={`/profile/${session.user.username}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Your Profile
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Sign out
-                    </button>
-                  </MenuItem>
-                </MenuItems>
-              </Menu>
-            ) : (
-              <div className="flex gap-2">
-                <Link href={"/signup"}>
-                  <button
-                    type="button"
-                    className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                  >
-                    Sign Up
-                  </button>
-                </Link>
-                <Link href={"/login"}>
-                  <button
-                    type="button"
-                    className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                  >
-                    Login
-                  </button>
-                </Link>
-              </div>
-            )}
-
-            {/* Mobile Menu Button */}
+            {/* Center Navigation (Visible on large screens) */}
             {session && (
-              <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white sm:hidden">
-                <span className="sr-only">Open main menu</span>
-                <IoMenu className="block h-6 w-6" aria-hidden="true" />
-                <RxCross2 className="hidden h-6 w-6" aria-hidden="true" />
-              </DisclosureButton>
+              <div className="hidden sm:block">
+                <div className="flex space-x-4 items-center">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      passHref
+                      prefetch={true}
+                    >
+                      <span
+                        className={`${
+                          pathname === item.href || pathname === item.href2
+                            ? "bg-gray-900 text-white"
+                            : "text-black hover:bg-gray-700 hover:text-white"
+                        } rounded-md flex gap-2 items-center px-3 py-2 text-md font-medium bg-gray-100`}
+                        aria-current={
+                          pathname === item.href || item.href2
+                            ? "page"
+                            : undefined
+                        }
+                      >
+                        {item.icon}
+                        {item.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             )}
+
+            {/* Right Section: Menu Button and Profile */}
+            <div className="flex items-center space-x-4">
+              {session ? (
+                <Menu as="div" className="relative">
+                  <div>
+                    <MenuButton className="relative rounded-full bg-background text-sm mt-2">
+                      <span className="sr-only">Open user menu</span>
+                      {avatarImg !== null ? (
+                        <img
+                          className="size-10 rounded-full"
+                          src={avatarImg}
+                          alt="User img"
+                        />
+                      ) : (
+                        <div className="size-10 flex items-center justify-center bg-sky-500 text-white text-2xl font-bold rounded-full">
+                          {avatarFallback}
+                        </div>
+                      )}
+                    </MenuButton>
+                  </div>
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-10 focus:outline-none">
+                    <MenuItem>
+                      <Link
+                        href={`/profile/${session.user.username}`}
+                        className="px-4 py-2 text-sm flex gap-2 text-gray-700 hover:bg-gray-100 border-b border-gray-200"
+                      >
+                        <FaUserCircle size={20} />
+                        Profile
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full text-start flex gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <FaSignOutAlt size={20} />
+                        Sign out
+                      </button>
+                    </MenuItem>
+                  </MenuItems>
+                </Menu>
+              ) : (
+                <div className="flex gap-2">
+                  <Link href={"/signup"}>
+                    <button
+                      type="button"
+                      className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                    >
+                      Sign Up
+                    </button>
+                  </Link>
+                  <Link href={"/login"}>
+                    <button
+                      type="button"
+                      className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-sm px-3 sm:px-5 py-2 sm:py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                    >
+                      Login
+                    </button>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Navigation Menu */}
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pt-2 pb-3">
+        {/* Mobile Bottom Navigation (Visible on small screens) */}
+        <div className="fixed bottom-0 inset-x-0 bg-background flex justify-around items-center sm:hidden py-4 border-t border-gray-700">
           {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as="a"
-              href={item.href}
-              className={classNames(
-                item.current
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                "block rounded-md px-3 py-2 text-base font-medium"
-              )}
-              aria-current={item.current ? "page" : undefined}
-            >
-              {item.name}
-            </DisclosureButton>
+            <Link key={item.name} href={item.href} passHref>
+              <div
+                className={`${
+                  pathname === item.href || pathname === item.href2
+                    ? "text-black"
+                    : "text-gray-500"
+                } flex flex-col items-center w-full`}
+              >
+                {item.icon}
+                <span className="text-xl">{item.name}</span>
+              </div>
+            </Link>
           ))}
         </div>
-      </DisclosurePanel>
-    </Disclosure>
+      </Disclosure>
+    </>
   );
 }
